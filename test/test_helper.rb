@@ -12,13 +12,14 @@ class ActiveSupport::TestCase
   include ApplicationHelper
 
   # Add more helper methods to be used by all tests here...
+  # returns true if test user is logged in, false otherwise
   def is_logged_in?
     !session[:user_id].nil?
   end
 
-  def log_in_as user
-    session[:user_id] = user.id
-  end
+  # def log_in_as user
+  #   session[:user_id] = user.id
+  # end
 
   class ActionDispatch::IntegrationTest
     def log_in_as(user, password:'password', remember_me: 1)
