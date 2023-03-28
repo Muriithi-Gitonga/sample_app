@@ -8,7 +8,11 @@
     sample application.
   </h2>
 
-  <%= link_to "Sign up now!", signup_path, class: "btn btn-lg btn-primary" %>
+  <%unless logged_in? %>
+    <%= link_to "Sign up now!", signup_path, class: "btn btn-lg btn-primary"  %>
+  <% end %>>
+
+  
 </div>
 <%# image tag helper takes an argument the path to an image and an optional options hash  %>
 <%= link_to image_tag("rails.svg", alt: "Rails logo", width: "200"), "https://rubyonrails.org/" %>
