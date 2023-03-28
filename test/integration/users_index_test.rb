@@ -1,32 +1,65 @@
 require "test_helper"
 
-class UsersIndexTest < ActionDispatch::IntegrationTest
+class UsersIndex < ActionDispatch::IntegrationTest
   
   def setup
     @admin = users(:tosh)
     @non_admin = users(:grace)
   end
 
-  test "index including pagination" do
+end
+
+class UsersIndexAdmin < UsersIndex
+
+  def setup
+    super
     log_in_as(@admin)
     get users_path
+  end
+
+end
+
+class UsersIndexAdminTest < UsersIndexAdmin
+
+  test "should render the index page" do
     assert_template 'users/index'
+  end
+
+  test "should paginate users " do
+    assert_select 'div.pagination'
     assert_select 'div.pagination', count: 2
-    User.paginate(page:1).each do |user|
+  end
+
+  test "should have delete links" do
+    User.where(activated: true).paginate(page: 1).each do |user|
       assert_select 'a[href=?]', user_path(user), text: user.name
       unless user == @admin
         assert_select 'a[href=?]', user_path(user), text: 'delete'
       end
     end
+  end
+  
+
+  test "should be able to delete non admin user" do
     assert_difference 'User.count', -1 do
       delete user_path(@non_admin)
-      assert_response :see_other
-      assert_redirected_to users_url
     end 
+    assert_response :see_other
+    assert_redirected_to users_url
   end
 
-  test "index aa non-admin" do
-    log_in_as @non_admin
+  test "should display only activated users" do
+    User.paginate(page: 1).first.toggle!(:activated)
+    assigns(:users).each do |user|
+      assert user.activated?  
+    end
+  end
+end
+
+class UsersNonAdminTest < UsersIndex
+
+  test "should not have delete links when logged in as non-admin " do
+    log_in_as(@non_admin)
     get users_path
     assert_select 'a', text: 'delete', count: 0
   end
