@@ -36,11 +36,9 @@ class UsersController < ApplicationController
     end
   
   def edit
-    @user = User.find(params[:id])
   end
 
     def update
-      @user = User.find(params[:id])
       if @user.update(user_params)
         # after a successful update
         flash[:success] = "Profile updated successfully"
@@ -73,12 +71,14 @@ class UsersController < ApplicationController
     def correct_user
       @user = User.find(params[:id])
       # redirect_to root_url if user is not current user
-      redirect_to root_url, status: :see_other unless current_user?(@user)
+      unless current_user?(@user)
+        flash[:warning] = "Not authorized "
+        redirect_to root_url, status: :see_other 
+      end
     end
 
     def admin_user
       redirect_to users_url, status: :see_other unless current_user.admin?
     end
 
-    
 end
