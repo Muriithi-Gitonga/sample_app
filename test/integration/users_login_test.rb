@@ -1,21 +1,25 @@
 class UsersLogin < ActionDispatch::IntegrationTest
-
   def setup
     @user = users(:tosh)
   end
 end
 
 class InvalidPasswordTest < UsersLogin
-
   test "login path" do
     get login_path
-    assert_template 'sessions/new'
+    assert_template "sessions/new"
   end
 
   test "login with valid email/invalid password" do
-    post login_path, params: { session: { email: @user.email, password: "invalid" } }
+    post login_path,
+         params: {
+           session: {
+             email: @user.email,
+             password: "invalid"
+           }
+         }
     assert_not is_logged_in?
-    assert_template 'sessions/new'
+    assert_template "sessions/new"
     assert_not flash.empty?
     get root_path
     assert flash.empty?
@@ -23,15 +27,19 @@ class InvalidPasswordTest < UsersLogin
 end
 
 class ValidLogin < UsersLogin
-
   def setup
     super
-    post login_path, params: { session: { email: @user.email, password: 'password' } }
+    post login_path,
+         params: {
+           session: {
+             email: @user.email,
+             password: "password"
+           }
+         }
   end
 end
 
 class ValidLoginTest < ValidLogin
-
   test "valid login" do
     assert is_logged_in?
     assert_redirected_to @user
@@ -39,7 +47,7 @@ class ValidLoginTest < ValidLogin
 
   test "redirect after login" do
     follow_redirect!
-    assert_template 'users/show'
+    assert_template "users/show"
     assert_select "a[href=?]", login_path, count: 0
     assert_select "a[href=?]", logout_path
     assert_select "a[href=?]", user_path(@user)
@@ -47,7 +55,6 @@ class ValidLoginTest < ValidLogin
 end
 
 class Logout < ValidLogin
-
   def setup
     super
     delete logout_path
@@ -55,7 +62,6 @@ class Logout < ValidLogin
 end
 
 class LogoutTest < Logout
-
   test "successful logout" do
     assert_not is_logged_in?
     assert_response :see_other
@@ -65,7 +71,7 @@ class LogoutTest < Logout
   test "redirect after logout" do
     follow_redirect!
     assert_select "a[href=?]", login_path
-    assert_select "a[href=?]", logout_path,      count: 0
+    assert_select "a[href=?]", logout_path, count: 0
     assert_select "a[href=?]", user_path(@user), count: 0
   end
 
@@ -73,22 +79,19 @@ class LogoutTest < Logout
     delete logout_path
     assert_redirected_to root_url
   end
-
-  
 end
 # rembering test
 class RememberTest < UsersLogin
-  
   test "login with rembering" do
-    log_in_as(@user, remember_me: '1')
+    log_in_as(@user, remember_me: "1")
     assert_equal cookies[:remember_token], assigns(:user).remember_token
   end
 
   test "login without rembering" do
     # log in to test the cookie
-    log_in_as(@user, remember_me: '1')
+    log_in_as(@user, remember_me: "1")
     # login again and assert the cookies is deleted
-    log_in_as(@user, remember_me: '0')
+    log_in_as(@user, remember_me: "0")
     assert cookies[:remember_token].blank?
   end
 end

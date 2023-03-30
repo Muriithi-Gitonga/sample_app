@@ -1,7 +1,6 @@
 require "test_helper"
 
 class UsersShowTest < ActionDispatch::IntegrationTest
-
   def setup
     @active = users(:tosh)
     @inactive = users(:inactive)
@@ -11,5 +10,4 @@ class UsersShowTest < ActionDispatch::IntegrationTest
     get user_path(@inactive)
     assert_redirected_to root_url
   end
-
 end

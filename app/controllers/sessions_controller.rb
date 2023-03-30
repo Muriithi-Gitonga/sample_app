@@ -1,6 +1,5 @@
 class SessionsController < ApplicationController
   def new
-  
   end
 
   def create
@@ -10,7 +9,7 @@ class SessionsController < ApplicationController
       if @user.activated?
         forwarding_url = session[:forwading_url]
         reset_session #reset a session immediately before logging in so that the attackers desired  is get cleared and freshly created id ends in session hash
-        params[:session][:remember_me] == '1' ? remember(@user) : forget(@user)
+        params[:session][:remember_me] == "1" ? remember(@user) : forget(@user)
         log_in @user
         flash[:success] = "Welcome #{@user.name}"
         redirect_to forwarding_url || @user
@@ -23,7 +22,7 @@ class SessionsController < ApplicationController
     else
       # create an error message
       flash.now[:danger] = "Invalid email/password combination"
-      render 'new', status: :unprocessable_entity
+      render "new", status: :unprocessable_entity
     end
   end
 
@@ -31,6 +30,4 @@ class SessionsController < ApplicationController
     log_out if logged_in?
     redirect_to root_url, status: :see_other
   end
-
-  
 end
