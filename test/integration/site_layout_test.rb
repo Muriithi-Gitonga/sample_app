@@ -1,15 +1,20 @@
 require "test_helper"
 
 class SiteLayoutTest < ActionDispatch::IntegrationTest
-
   def setup
     @user = users(:tosh)
-    post login_path, params: { session: { email: @user.email, password: 'password' } }
+    post login_path,
+         params: {
+           session: {
+             email: @user.email,
+             password: "password"
+           }
+         }
   end
 
   test "layout links" do
     get root_path
-    assert_template 'static_pages/home'
+    assert_template "static_pages/home"
     assert_select "a[href=?]", root_path, count: 2
     assert_select "a[href=?]", help_path
     assert_select "a[href=?]", about_path
@@ -38,6 +43,5 @@ class SiteLayoutTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", login_path, count: 0
     assert_select "a[href=?]", users_path
     get users_path
-    
   end
 end

@@ -1,7 +1,6 @@
 require "test_helper"
 
 class UsersEditTest < ActionDispatch::IntegrationTest
-
   def setup
     @user = users(:tosh)
   end
@@ -9,7 +8,15 @@ class UsersEditTest < ActionDispatch::IntegrationTest
   test "unsuccesful edit" do
     log_in_as @user
     get edit_user_path(@user)
-    patch user_path(@user), params: {user: {name: "", email: "", password:"", password_confirmation: "" }}
+    patch user_path(@user),
+          params: {
+            user: {
+              name: "",
+              email: "",
+              password: "",
+              password_confirmation: ""
+            }
+          }
     assert_template "users/edit"
   end
 
@@ -20,7 +27,15 @@ class UsersEditTest < ActionDispatch::IntegrationTest
     assert session[:forwading_url].nil?
     name = "kamau"
     email = "kamau@example.com"
-    patch user_path(@user), params: {user: {name: name, email: email, password:"", password_confirmation: "" }}
+    patch user_path(@user),
+          params: {
+            user: {
+              name: name,
+              email: email,
+              password: "",
+              password_confirmation: ""
+            }
+          }
     assert_not flash.empty?
     assert_redirected_to @user
     @user.reload
