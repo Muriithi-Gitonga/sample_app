@@ -15,17 +15,11 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
-  end
+  end 
 
   def create
     @user = User.new(user_params)
     if @user.save
-      # # Handle a successful save
-      # reset_session
-      # #  login the user after a successful save
-      # log_in @user
-      # flash[:success] = "Welcome to the Sample App!"
-      # redirect_to @user
       @user.send_activation_email
       flash[:info] = "Please check your email to activate your account"
       redirect_to root_url
@@ -39,7 +33,6 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      # after a successful update
       flash[:success] = "Profile updated successfully"
       redirect_to @user
     else
@@ -64,13 +57,7 @@ class UsersController < ApplicationController
     )
   end
 
-  def logged_in_user
-    unless logged_in?
-      store_location
-      flash[:danger] = "Please log in."
-      redirect_to login_url, status: :see_other
-    end
-  end
+ 
 
   def correct_user
     @user = User.find(params[:id])
